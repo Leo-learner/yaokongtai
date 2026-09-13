@@ -1,0 +1,26 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npm run lint:secrets
+      - run: npm audit --audit-level=high
+  mac-agent:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - run: cd mac-agent && xcodegen generate
+      - run: cd mac-agent && xcodebuild test -project YaokongtaiAgent.xcodeproj -scheme YaokongtaiAgent -destination 'platform=macOS' -derivedDataPath DerivedData -clonedSourcePackagesDirPath SourcePackages CODE_SIGNING_ALLOWED=NO

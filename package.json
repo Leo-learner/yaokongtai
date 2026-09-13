@@ -1,0 +1,19 @@
+{
+  "name": "yaokongtai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "build": "npm run build -w @yaokongtai/protocol && npm run build -w @yaokongtai/web && npm run build -w @yaokongtai/relay",
+    "dev": "npm run dev -w @yaokongtai/relay",
+    "test": "npm run test -w @yaokongtai/protocol && npm run build -w @yaokongtai/protocol && npm run test -w @yaokongtai/relay && npm run test -w @yaokongtai/web",
+    "typecheck": "npm run typecheck -w @yaokongtai/protocol && npm run build -w @yaokongtai/protocol && npm run typecheck -w @yaokongtai/relay && npm run typecheck -w @yaokongtai/web",
+    "lint:secrets": "node scripts/scan-secrets.mjs",
+    "deploy:dry-run": "bash scripts/install-release.sh --dry-run",
+    "mac:generate": "cd mac-agent && xcodegen generate",
+    "mac:test": "cd mac-agent && xcodebuild test -project YaokongtaiAgent.xcodeproj -scheme YaokongtaiAgent -destination 'platform=macOS' -derivedDataPath DerivedData -clonedSourcePackagesDirPath SourcePackages CODE_SIGNING_ALLOWED=NO",
+    "mac:build": "bash scripts/build-mac-app.sh"
+  },
+  "engines": { "node": ">=22.0.0", "npm": ">=10.0.0" }
+}

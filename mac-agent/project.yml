@@ -1,0 +1,80 @@
+name: YaokongtaiAgent
+options:
+  bundleIdPrefix: com.dkz12345.yaokongtai
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "26.0"
+  createIntermediateGroups: true
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.9.2
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    DEVELOPMENT_TEAM: N43G4FS48X
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: Apple Development
+targets:
+  YaokongtaiAgent:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dkz12345.yaokongtai.agent
+        PRODUCT_NAME: YaokongtaiAgent
+        INFOPLIST_KEY_CFBundleDisplayName: 遥控台代理
+        ENABLE_HARDENED_RUNTIME: YES
+        CODE_SIGN_INJECT_BASE_ENTITLEMENTS: YES
+      configs:
+        Debug:
+          YAOKONGTAI_FEED_URL: http://localhost:3300/updates/appcast.xml
+        Release:
+          YAOKONGTAI_FEED_URL: https://control.dkz12345.com/updates/appcast.xml
+    dependencies:
+      - package: Sparkle
+        product: Sparkle
+    info:
+      path: Resources/Info.plist
+      properties:
+        CFBundleDisplayName: 遥控台代理
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSUIElement: true
+        NSBluetoothAlwaysUsageDescription: 遥控台需要读取和切换这台 Mac 的蓝牙状态。
+        NSAppleEventsUsageDescription: 遥控台需要控制深色模式、勿扰模式和睡眠。
+        NSHumanReadableCopyright: Copyright © 2026 Leo. MIT License.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        SUFeedURL: $(YAOKONGTAI_FEED_URL)
+        SUPublicEDKey: TAZeB4WwFM6dUbDWMYuH4I8KIN3XmNPaSCc0ilfFEkI=
+        SUEnableAutomaticChecks: true
+        SUAutomaticallyUpdate: false
+        SUVerifyUpdateBeforeExtraction: true
+        SURequireSignedFeed: true
+  YaokongtaiAgentTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: YaokongtaiAgent
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dkz12345.yaokongtai.agent.tests
+schemes:
+  YaokongtaiAgent:
+    build:
+      targets:
+        YaokongtaiAgent: all
+        YaokongtaiAgentTests: [test]
+    test:
+      targets:
+        - YaokongtaiAgentTests
+    run:
+      config: Debug
+    archive:
+      config: Release
